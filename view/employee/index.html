@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../../content/ionicons/css/w3.css">
+        <link rel="stylesheet" href="../../content/ionicons/css/ionicons.min.css">
+        <title>XCOMM - Employee</title>
+        <style>
+            .hoverbtn:hover {
+                font-weight: bold;
+                opacity: 0.4;
+            }
+
+            a {
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="w3-row-padding">
+            <div class="w3-card-2 w3-margin-top">
+                <header class="w3-container w3-center w3-teal">
+                    <div class="w3-row">
+                        <div class="w3-half">
+                            <h3 class="w3-right">List Employee</h3>
+                        </div>
+                        <div class="w3-half w3-text-right">
+                            <div class="w3-right">
+                                <button class="w3-btn w3-blue" onclick="document.getElementById('create-form').style.display='block'">Create</button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <table class="w3-table w3-centered w3-border w3-bordered w3-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Ord</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range $index, $employee := .}}
+                        <tr>
+                            <td>#{{addOne $index}}</td>
+                            <td>{{$employee.EmpID}}</td>
+                            <td>{{$employee.EmpName}}</td>
+                            <td>{{$employee.EmpAddress}}</td>
+                            <td>{{$employee.EmpCity}}</td>
+                            <td>{{$employee.EmpEmail}}</td>
+                            <td>
+                                <button class="w3-btn w3-teal" onclick="updateEmployee(this);">Edit</button>
+                                <button class="w3-btn w3-red" onclick="deleteEmployee(this)">Delete</button>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Create Modals -->
+        <div class="w3-container">
+            <div id="create-form" class="w3-modal">
+                <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+                    <!-- head -->
+                    <div class="w3-container w3-teal">
+                        <h2>Create New Employee</h2>
+                        <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                            onclick="document.getElementById('create-form').style.display='none'">&times;</span>
+                    </div>
+
+                    <form class="w3-container" action="/create" method="post">
+                        <label class="w3-label">Employee Name</label>
+                        <input class="w3-input" type="text" name="EmpName" value="" placeholder="ketik employee name">
+                        <label class="w3-label">Employee Address</label>
+                        <input class="w3-input" type="text" name="EmpAddress" value="" placeholder="ketik employee address">
+                        <label class="w3-label">Employee City</label>
+                        <input class="w3-input" type="text" name="EmpCity" value="" placeholder="ketik employee city">
+                        <label class="w3-label">Employee Email</label>
+                        <input class="w3-input" type="text" name="EmpEmail" value="" placeholder="ketik employee email">
+                        <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modals -->
+        <div class="w3-container">
+            <div id="edit-form" class="w3-modal">
+                <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+                    <!-- head -->
+                    <div class="w3-container w3-teal">
+                        <h2>Edit Existing Employee</h2>
+                        <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                            onclick="document.getElementById('edit-form').style.display='none'">&times;</span>
+                    </div>
+
+                    <form class="w3-container" action="/update" method="post">
+                        <input type="hidden" name="EmpID" id="EmpIdToUpdate">
+                        <label class="w3-label">Employee Name</label>
+                        <input class="w3-input" type="text" name="EmpName" id="EmpNameToUpdate" value="" placeholder="ketik employee name">
+                        <label class="w3-label">Employee Address</label>
+                        <input class="w3-input" type="text" name="EmpAddress" id="EmpAddressToUpdate" value="" placeholder="ketik employee address">
+                        <label class="w3-label">Employee City</label>
+                        <input class="w3-input" type="text" name="EmpCity" id="EmpCityToUpdate" value="" placeholder="ketik employee city">
+                        <label class="w3-label">Employee Email</label>
+                        <input class="w3-input" type="text" name="EmpEmail" id="EmpEmailToUpdate" value="" placeholder="ketik employee email">
+                        <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modals -->
+        <div class="w3-container">
+            <div id="delete-form" class="w3-modal">
+                <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+                    <!-- head -->
+                    <div class="w3-container w3-teal">
+                        <h2>Delete Employee</h2>
+                        <h3>Are you sure?</h3>
+                        <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                            onclick="document.getElementById('delete-form').style.display='none'">&times;</span>
+                    </div>
+
+                    <form class="w3-container" action="/delete" method="post">
+                        <input type="hidden" name="EmpID" id="EmpIdToDelete">
+                        <div class="w3-center">
+                            <button class="w3-btn w3-red w3-margin-top w3-margin-bottom" type="submit">Delete</button>
+                            <button type="button" class="w3-btn w3-teal w3-margin-top w3-margin-bottom"
+                                    onclick="document.getElementById('delete-form').style.display='none'">Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function updateEmployee(e) {
+                var editForm = document.getElementById('edit-form');
+                // display update form
+                editForm.style.display = 'block';
+                // get employee id to update
+                var empId = e.parentNode.parentNode.childNodes[3].innerText;
+                var empName = e.parentNode.parentNode.childNodes[5].innerText;
+                var empAddress = e.parentNode.parentNode.childNodes[7].innerText;
+                var empCity = e.parentNode.parentNode.childNodes[9].innerText;
+                var empEmail = e.parentNode.parentNode.childNodes[11].innerText;
+                document.getElementById('EmpIdToUpdate').value = empId;
+                document.getElementById('EmpNameToUpdate').value = empName;
+                document.getElementById('EmpAddressToUpdate').value = empAddress;
+                document.getElementById('EmpCityToUpdate').value = empCity;
+                document.getElementById('EmpEmailToUpdate').value = empEmail;
+            }
+
+            function deleteEmployee(e) {
+                var deleteForm = document.getElementById('delete-form');
+                deleteForm.style.display = 'block';
+                var empId = e.parentNode.parentNode.childNodes[3].innerText;
+                document.getElementById('EmpIdToDelete').value = empId;
+            }
+        </script>
+    </body>
+</html>
